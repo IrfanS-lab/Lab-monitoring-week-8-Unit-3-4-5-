@@ -1,11 +1,13 @@
 package com.example.basic_android_kotlin_compose_training_courses
 
+
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -17,9 +19,9 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.MaterialTheme.colorScheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +34,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.basic_android_kotlin_compose_training_courses.data.DataSource
-import com.example.basic_android_kotlin_compose_training_courses.model.Topic
 import com.example.basic_android_kotlin_compose_training_courses.ui.theme.CoursesTheme
+import com.example.basic_android_kotlin_compose_training_courses.R
+import com.example.basic_android_kotlin_compose_training_courses.model.Topic
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,14 +45,20 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             CoursesTheme {
+                // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier
                         .fillMaxSize()
-                        .statusBarsPadding()
-                        .padding(12.dp),
-                    color = MaterialTheme.colorScheme.surface
+                        .statusBarsPadding(),
+                    color = colorScheme.background
                 ) {
-                    TopicGrid()
+                    TopicGrid(
+                        modifier = Modifier.padding(
+                            start = dimensionResource(R.dimen.padding_small),
+                            top = dimensionResource(R.dimen.padding_small),
+                            end = dimensionResource(R.dimen.padding_small),
+                        )
+                    )
                 }
             }
         }
@@ -59,8 +69,8 @@ class MainActivity : ComponentActivity() {
 fun TopicGrid(modifier: Modifier = Modifier) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.padding_small)),
         modifier = modifier
     ) {
         items(DataSource.topics) { topic ->
@@ -71,50 +81,41 @@ fun TopicGrid(modifier: Modifier = Modifier) {
 
 @Composable
 fun TopicCard(topic: Topic, modifier: Modifier = Modifier) {
-    Card(
-        modifier = modifier,
-        shape = MaterialTheme.shapes.medium,
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceVariant
-        )
-    ) {
-        Row(
-            modifier = Modifier.padding(12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+    Card {
+        Row {
+            Box {
+                Image(
+                    painter = painterResource(id = topic.imageRes),
+                    contentDescription = null,
+                    modifier = modifier
+                        .size(width = 70.dp, height = 70.dp)
+                        .aspectRatio(1f),
+                    contentScale = ContentScale.Crop
+                )
+            }
 
-            Image(
-                painter = painterResource(id = topic.imageRes),
-                contentDescription = null,
-                modifier = Modifier
-                    .size(90.dp)
-                    .aspectRatio(1f)
-                    .padding(end = 12.dp),
-                contentScale = ContentScale.Crop
-            )
-
-            Column(verticalArrangement = Arrangement.SpaceBetween) {
+            Column {
                 Text(
                     text = stringResource(id = topic.name),
-                    style = MaterialTheme.typography.titleMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(
+                        start = dimensionResource(R.dimen.padding_medium),
+                        top = dimensionResource(R.dimen.padding_medium),
+                        end = dimensionResource(R.dimen.padding_medium),
+                        bottom = dimensionResource(R.dimen.padding_small)
+                    )
                 )
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.padding(top = 8.dp)
-                ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_grain),
                         contentDescription = null,
-                        modifier = Modifier.size(20.dp),
-                        tint = MaterialTheme.colorScheme.primary
+                        modifier = Modifier
+                            .padding(start = dimensionResource(R.dimen.padding_medium))
                     )
                     Text(
-                        text = "${topic.availableCourses} courses",
-                        style = MaterialTheme.typography.labelLarge,
-                        modifier = Modifier.padding(start = 6.dp)
+                        text = topic.availableCourses.toString(),
+                        style = MaterialTheme.typography.labelMedium,
+                        modifier = Modifier.padding(start = dimensionResource(R.dimen.padding_small))
                     )
                 }
             }
@@ -124,9 +125,15 @@ fun TopicCard(topic: Topic, modifier: Modifier = Modifier) {
 
 @Preview(showBackground = true)
 @Composable
-fun TopicCardPreview() {
+fun TopicPreview() {
     CoursesTheme {
         val topic = Topic(R.string.photography, 321, R.drawable.photography)
-        TopicCard(topic)
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            TopicCard(topic = topic)
+        }
     }
 }
