@@ -88,7 +88,7 @@ fun TopicCard(topic: Topic, modifier: Modifier = Modifier) {
                     painter = painterResource(id = topic.imageRes),
                     contentDescription = null,
                     modifier = modifier
-                        .size(width = 68.dp, height = 68.dp)
+                        .size(width = 60.dp, height = 60.dp)
                         .aspectRatio(1f),
                     contentScale = ContentScale.Crop
                 )
